@@ -10,17 +10,25 @@ document.getElementById("designForm").addEventListener("submit", async (e) => {
   const textResult = document.getElementById("textResult");
   const imageGrid = document.getElementById("imageGrid");
 
-  // >>> LOADER ELEMENTS
   const loadingText = document.getElementById("loadingText");
   const loadingImages = document.getElementById("loadingImages");
 
-  // Clear UI
+  // === BUTTON ELEMENT ===
+  const btn = document.getElementById("generateBtn");
+
+  // CLEAR UI
   textResult.innerHTML = "";
   imageGrid.innerHTML = "";
+
+  // === ACTIVATE BUTTON LOADING STATE ===
+  btn.disabled = true;
+  btn.classList.add("loading");
+  btn.innerHTML = `Loading <div class="spinner-btn"></div>`;
+
   loadingText.style.display = "block";
   loadingImages.style.display = "none";
 
-  // 1) Generate description from Groq
+  // ==== TEXT REQUEST (GROQ) ====
   const textResponse = await fetch("/api/text", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -32,16 +40,14 @@ document.getElementById("designForm").addEventListener("submit", async (e) => {
   const textData = await textResponse.json();
   loadingText.style.display = "none";
 
-  // Format text lebih rapih
   textResult.innerHTML = textData.text
     .split(". ")
     .map((sentence) => `<p>${sentence.trim()}.</p>`)
     .join("");
 
-  // 2) Start image loader
+  // ==== IMAGE LOADING ====
   loadingImages.style.display = "block";
 
-  // CAMERA ANGLES for 4 images
   const angles = [
     "room view from the corner",
     "front view of the room",
@@ -54,7 +60,6 @@ document.getElementById("designForm").addEventListener("submit", async (e) => {
       `${style} ${roomType} interior, ${color} theme, ${angle}`
   );
 
-  // 3) Image API
   const imgRes = await fetch("/api/image", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -64,15 +69,18 @@ document.getElementById("designForm").addEventListener("submit", async (e) => {
   const imgData = await imgRes.json();
   loadingImages.style.display = "none";
 
-  // 4) Render images
   if (!imgData.images) {
-    imageGrid.innerHTML = "<p>Terjadi kesalahan saat membuat gambar.</p>";
-    return;
+    imageGrid.innerHTML = "<p>Gagal membuat gambar.</p>";
+  } else {
+    imgData.images.forEach((src) => {
+      const img = document.createElement("img");
+      img.src = src;
+      imageGrid.appendChild(img);
+    });
   }
 
-  imgData.images.forEach((src) => {
-    const img = document.createElement("img");
-    img.src = src;
-    imageGrid.appendChild(img);
-  });
+  // === RESTORE BUTTON STATE ===
+  btn.disabled = false;
+  btn.classList.remove("loading");
+  btn.innerHTML = `Generate Design`;
 });
