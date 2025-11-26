@@ -1,74 +1,57 @@
-/* D2F iOS SUPER PACK — app.js
-   - tab navigation
-   - generate flow (text + images)
-   - progress simulation
-   - modal preview + download
-   - history stored in localStorage
-*/
+/* D2F SUPER iOS PACK — Full app.js */
 
 const PAGES = ["page-home","page-generate","page-history","page-profile"];
-const MODELS = []; // placeholder if needed
 
-// UTIL: show page
+// Navigation system
 function showPage(id){
   PAGES.forEach(p => document.getElementById(p).classList.remove("active"));
   document.getElementById(id).classList.add("active");
-  // update tabs
-  document.querySelectorAll(".tab").forEach(b => b.classList.toggle("active", b.dataset.target === id));
+
+  document.querySelectorAll(".tab").forEach(btn => {
+    btn.classList.toggle("active", btn.dataset.target === id);
+  });
 }
 
-// TABBAR events
+// Tabbar
 document.querySelectorAll(".tab").forEach(btn=>{
-  btn.addEventListener("click", ()=> showPage(btn.dataset.target));
+  btn.addEventListener("click",()=> showPage(btn.dataset.target));
 });
 
-// FAB and header quick open
-document.getElementById("fabGenerate").addEventListener("click", ()=> {
+// FAB
+document.getElementById("fabGenerate").addEventListener("click",()=>{
   showPage("page-generate");
-  window.scrollTo({ top: 0, behavior: "smooth" });
-});
-document.getElementById("btnOpenGenerate").addEventListener("click", ()=> {
-  showPage("page-generate");
+  window.scrollTo({ top:0, behavior:"smooth" });
 });
 
-// history opener
-document.getElementById("btnOpenHistory").addEventListener("click", ()=> {
+// Buttons on Home
+document.getElementById("btnOpenGenerate").addEventListener("click",()=> showPage("page-generate"));
+document.getElementById("btnOpenHistory").addEventListener("click",()=>{
   showPage("page-history");
   populateHistory();
 });
 
-// toggle dark mode from profile
-const toggleDark = document.getElementById("toggleDark");
-toggleDark.addEventListener("change", (e)=>{
-  document.documentElement.style.background = e.target.checked ? "#0f1724":"#eef4ff";
-  // quick visual: invert accent maybe
-});
-
-// modal controls
+// Modal system
 const modal = document.getElementById("modal");
 const modalContent = document.getElementById("modalContent");
 const modalClose = document.getElementById("modalClose");
 const modalDownload = document.getElementById("modalDownload");
-modalClose.addEventListener("click", closeModal);
-modal.addEventListener("click", (e)=> { if(e.target === modal) closeModal(); });
 
-function openModal(imageDataUrl){
+modalClose.addEventListener("click", closeModal);
+modal.addEventListener("click",e=>{ if(e.target===modal) closeModal(); });
+
+function openModal(url){
   modal.classList.add("show");
-  modal.setAttribute("aria-hidden","false");
-  modalContent.innerHTML = `<img src="${imageDataUrl}" style="width:100%; border-radius:12px; display:block;" alt="Preview">`;
-  modalDownload.href = imageDataUrl;
-  modalDownload.setAttribute("download","design.png");
+  modalContent.innerHTML = `<img src="${url}" style="width:100%; border-radius:14px;" />`;
+  modalDownload.href = url;
 }
 function closeModal(){
   modal.classList.remove("show");
-  modal.setAttribute("aria-hidden","true");
   modalContent.innerHTML = "";
 }
 
-// progress simulator
-function simulateProgress(barId, duration=2500){
-  const bar = document.getElementById(barId);
-  if(!bar) return null;
+// Progress bar simulator
+function simulateProgress(id, duration){
+  const bar = document.getElementById(id);
   bar.style.width = "0%";
   let progress = 0;
   const step = 100 / (duration / 120);
@@ -80,160 +63,135 @@ function simulateProgress(barId, duration=2500){
   },120);
 }
 
-// history (localStorage)
+// Save history
 function saveToHistory(item){
-  try{
-    const list = JSON.parse(localStorage.getItem("d2f_history")||"[]");
-    list.unshift(item);
-    // keep 40 items
-    localStorage.setItem("d2f_history", JSON.stringify(list.slice(0,40)));
-  }catch(e){}
+  let list = JSON.parse(localStorage.getItem("d2f_history")||"[]");
+  list.unshift(item);
+  list = list.slice(0,50);
+  localStorage.setItem("d2f_history", JSON.stringify(list));
 }
 function populateHistory(){
   const wrap = document.getElementById("historyList");
   wrap.innerHTML = "";
   const list = JSON.parse(localStorage.getItem("d2f_history")||"[]");
-  if(!list.length){ wrap.innerHTML = `<div class="muted">No saved designs yet.</div>`; return; }
-  list.forEach((it, idx)=>{
-    const el = document.createElement("div");
-    el.className = "history-item";
-    const img = document.createElement("img");
-    img.src = it.images?.[0] || "";
-    const meta = document.createElement("div");
-    meta.innerHTML = `<div style="font-weight:700">${it.roomType} • ${it.style}</div><div class="muted" style="font-size:13px;margin-top:6px">${it.date}</div>`;
-    el.append(img, meta);
-    el.addEventListener("click", ()=> {
-      // open modal with first image and details
-      openModal(it.images?.[0]);
-    });
-    wrap.appendChild(el);
+
+  if(list.length === 0){
+    wrap.innerHTML = `<p class="muted">No saved designs yet.</p>`;
+    return;
+  }
+
+  list.forEach(item =>{
+    const div = document.createElement("div");
+    div.className = "history-item";
+    div.innerHTML = `
+      <img src="${item.images[0]}">
+      <div>
+        <strong>${item.roomType} • ${item.style}</strong>
+        <div class="muted" style="font-size:13px">${item.date}</div>
+      </div>`;
+    div.addEventListener("click",()=> openModal(item.images[0]));
+    wrap.appendChild(div);
   });
 }
-document.getElementById("clearHistory").addEventListener("click", ()=>{
+document.getElementById("clearHistory").addEventListener("click",()=>{
   localStorage.removeItem("d2f_history");
   populateHistory();
 });
 
-// Design form handling (text + pollinations images)
+// API Workflow
 document.getElementById("designForm").addEventListener("submit", async (e)=>{
   e.preventDefault();
-  // read inputs
-  const color = document.getElementById("color").value.trim();
-  const size = document.getElementById("size").value.trim();
-  const roomType = document.getElementById("roomType").value.trim();
-  const budget = document.getElementById("budget").value;
-  const style = document.getElementById("style").value;
 
-  // ui refs
+  const color = colorInput.value;
+  const size = sizeInput.value;
+  const roomType = roomTypeInput.value;
+  const budget = budgetInput.value;
+  const style = styleInput.value;
+
+  const btn = document.getElementById("generateBtn");
+  btn.disabled = true;
+  btn.innerHTML = `Loading <span class="spinner-btn"></span>`;
+  btn.classList.add("loading");
+
   const loadingText = document.getElementById("loadingText");
   const loadingImages = document.getElementById("loadingImages");
   const textCard = document.getElementById("textCard");
   const imagesCard = document.getElementById("imagesCard");
   const textResult = document.getElementById("textResult");
   const imageGrid = document.getElementById("imageGrid");
-  const btn = document.getElementById("generateBtn");
 
-  // clear
-  textResult.innerHTML=""; imageGrid.innerHTML=""; textCard.hidden=true; imagesCard.hidden=true;
+  textResult.innerHTML = "";
+  imageGrid.innerHTML = "";
+  textCard.hidden = true;
+  imagesCard.hidden = true;
 
-  // button loading state
-  btn.disabled = true;
-  btn.classList.add("loading");
-  btn.innerHTML = `Loading <span class="spinner-btn"></span>`;
-
-  // start text progress
+  // TEXT GEN
   loadingText.hidden = false;
-  const txtProg = simulateProgress("progressTextBar", 2200);
+  const txtProg = simulateProgress("progressTextBar", 2300);
 
-  // call /api/text
-  let textData = { text: "" };
-  try{
-    const r = await fetch("/api/text", {
-      method:"POST", headers:{"Content-Type":"application/json"},
-      body: JSON.stringify({ prompt: `Buatkan deskripsi interior untuk ${roomType} dengan warna ${color}, luas ${size}m2, gaya ${style}, dan budget ${budget} juta rupiah.` })
-    });
-    textData = await r.json();
-  }catch(err){
-    textData = { text: "Gagal membuat deskripsi (network error)." };
-    console.error(err);
-  }
+  const textRes = await fetch("/api/text", {
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
+    body:JSON.stringify({
+      prompt:`Buatkan deskripsi interior untuk ${roomType} dengan warna ${color}, luas ${size}m2, gaya ${style}, dan budget ${budget} juta rupiah.`
+    })
+  }).then(r=>r.json()).catch(()=> ({text:"Gagal memuat deskripsi."}));
 
-  // finish text progress
   clearInterval(txtProg);
   document.getElementById("progressTextBar").style.width = "100%";
-  setTimeout(()=>{ loadingText.hidden = true; }, 300);
+  setTimeout(()=> loadingText.hidden = true, 300);
 
-  // format text paragraphs cleanly
   textCard.hidden = false;
-  const formatted = (textData.text || "").split(/\.\s+/).filter(Boolean).map(s=>`<p>${s.trim()}.</p>`).join("");
-  textResult.innerHTML = formatted || "<p class='muted'>No description returned.</p>";
+  textResult.innerHTML = textRes.text
+    .split(". ")
+    .map(s=>`<p>${s.trim()}.</p>`).join("");
 
-  // images: start
+  // IMAGE GEN
   loadingImages.hidden = false;
-  imagesCard.hidden = true;
-  const imgProg = simulateProgress("progressImageBar", 3600);
+  const imgProg = simulateProgress("progressImageBar", 3500);
 
-  // create 4 angle prompts (short to avoid pollinations 400)
   const angles = [
-    "corner view, wide angle",
-    "front view, eye-level",
-    "slightly elevated view",
-    "side cinematic view"
+    "corner view interior",
+    "front angle interior",
+    "slightly elevated angle",
+    "side cinematic angle"
   ];
   const prompts = angles.map(a => `${style} ${roomType} interior, ${color} theme, ${a}`);
 
-  // call /api/image (expects prompts array, Pollinations handler will simplify)
-  let imgData = { images: [] };
-  try {
-    const r = await fetch("/api/image", {
-      method:"POST", headers:{"Content-Type":"application/json"},
-      body: JSON.stringify({ prompts })
-    });
-    imgData = await r.json();
-  } catch(err) {
-    console.error("Image fetch failed", err);
-  }
+  const imgRes = await fetch("/api/image", {
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
+    body:JSON.stringify({ prompts })
+  }).then(r=>r.json()).catch(()=> ({images:[]}));
 
-  // finish image progress
   clearInterval(imgProg);
   document.getElementById("progressImageBar").style.width = "100%";
-  setTimeout(()=>{ loadingImages.hidden = true; }, 300);
+  setTimeout(()=> loadingImages.hidden = true, 300);
 
-  // render images
   imagesCard.hidden = false;
-  if(!imgData.images || !imgData.images.length){
-    imageGrid.innerHTML = `<div class="muted">No images returned.</div>`;
+
+  if(!imgRes.images || imgRes.images.length === 0){
+    imageGrid.innerHTML = `<p class="muted">No images returned.</p>`;
   } else {
-    imageGrid.innerHTML = "";
-    imgData.images.forEach((src, idx)=>{
+    imgRes.images.forEach(src=>{
       const img = document.createElement("img");
       img.src = src;
-      img.alt = `Design ${idx+1}`;
-      img.addEventListener("click", ()=> openModal(src));
+      img.addEventListener("click",()=> openModal(src));
       imageGrid.appendChild(img);
     });
-    // save to history
+
     saveToHistory({
-      date: new Date().toLocaleString(),
-      roomType, style, color, size, budget,
-      images: imgData.images,
-      text: textData.text
+      date:new Date().toLocaleString(),
+      color,size,roomType,budget,style,
+      images:imgRes.images,
+      text:textRes.text
     });
   }
 
-  // restore button
   btn.disabled = false;
   btn.classList.remove("loading");
-  btn.innerHTML = `Generate Design`;
+  btn.innerHTML = "Generate";
 });
 
-// initial setup
-(function init(){
-  // default page
-  showPage("page-home");
-  // wire profile dark toggle state
-  const darkChk = document.getElementById("toggleDark");
-  darkChk.checked = false;
-  // populate history
-  populateHistory();
-})();
+// INITIALIZATION
+showPage("page-home");
