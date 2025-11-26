@@ -238,3 +238,86 @@ input[type="range"]::-webkit-slider-thumb {
   text-align: center;
   margin-top: 25px;
 }
+
+
+/* ============================
+   MOBILE RESPONSIVE MODE
+   ============================ */
+@media (max-width: 768px) {
+
+  body {
+    padding-bottom: 40px;
+  }
+
+  /* Header */
+  .header {
+    padding: 30px 15px;
+  }
+
+  .header h1 {
+    font-size: 1.9rem;
+  }
+
+  .header p {
+    font-size: 0.95rem;
+  }
+
+  /* Container */
+  .container {
+    padding: 0 12px;
+  }
+
+  /* Card */
+  .card {
+    padding: 18px;
+    border-radius: 12px;
+  }
+
+  .card h2 {
+    font-size: 1.2rem;
+  }
+
+  /* Input fields */
+  input,
+  select {
+    font-size: 14px;
+    padding: 10px;
+  }
+
+  /* Buttons */
+  .btn {
+    padding: 14px;
+    font-size: 0.95rem;
+  }
+
+  /* Image grid adjusts to 1 column */
+  .image-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  /* Better spacing for text */
+  #textResult {
+    font-size: 0.95rem;
+    line-height: 1.45;
+  }
+
+  /* Progress bar */
+  .progress-container {
+    height: 8px;
+  }
+
+  /* Loader sizes */
+  .loader-img {
+    width: 45px;
+    height: 45px;
+  }
+
+  .loader-text::before,
+  .loader-text::after,
+  .loader-text div {
+    width: 10px;
+    height: 10px;
+  }
+
+}
