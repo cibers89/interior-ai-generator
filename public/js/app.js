@@ -28,17 +28,18 @@ document.getElementById("designForm").addEventListener("submit", async (e) => {
   textResult.innerHTML = `<p>${textData.text}</p>`;
 
   // CAMERA ANGLES for 4 images
-  const angles = [
-    "wide angle from corner",
-    "eye-level frontal view",
-    "slightly elevated view",
-    "side-angle cinematic view"
-  ];
+	const angles = [
+	  "room view from the corner",
+	  "front view of the room",
+	  "slightly top side view",
+	  "side cinematic view"
+	];
 
-  const prompts = angles.map(
-    (angle) =>
-      `${style} ${roomType} interior, ${color} color palette, ${size}m2, budget ${budget} juta, ${angle}, realistic architectural photography`
-  );
+	const prompts = angles.map(
+	  (angle) =>
+		`${style} ${roomType} interior, ${color} theme, ${angle}`
+	);
+
 
   const imgRes = await fetch("/api/image", {
     method: "POST",
