@@ -4,7 +4,13 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>D2F Interior Design — iOS Pack</title>
+
+  <!-- CSS -->
   <link rel="stylesheet" href="css/styles.css" />
+
+  <!-- iOS-style font smoothing -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#ffffff">
 </head>
 
 <body>
@@ -13,18 +19,21 @@
   <header class="ios-header">
     <div class="ios-header-inner">
       <h1>D2F Interior Design</h1>
-      <p class="sub">Design your dream space with AI — iOS experience</p>
+      <p class="sub">Design your dream space using AI</p>
     </div>
   </header>
 
-  <!-- Main Application Container -->
+  <!-- APP MAIN -->
   <main class="app">
 
-    <!-- PAGE: HOME -->
+    <!-- ============================
+         PAGE: HOME
+    ============================ -->
     <section id="page-home" class="page active">
       <div class="card hero-card">
         <h2>Welcome</h2>
-        <p>Generate interior ideas in seconds. Use AI to visualize 4 angles instantly.</p>
+        <p>Generate interior ideas instantly using multi-angle visualization powered by AI.</p>
+
         <div class="hero-actions">
           <button id="btnOpenGenerate" class="btn small primary">New Design</button>
           <button id="btnOpenHistory" class="btn small outline">History</button>
@@ -32,29 +41,33 @@
       </div>
     </section>
 
-    <!-- PAGE: GENERATE -->
+    <!-- ============================
+         PAGE: GENERATE
+    ============================ -->
     <section id="page-generate" class="page">
 
-      <!-- FORM CARD -->
       <div class="card">
         <h2>Create New Design</h2>
 
         <form id="designForm" class="form-grid">
-
+          <!-- INPUT: Warna -->
           <label>Warna Utama
-            <input type="text" id="color" placeholder="Biru pastel, putih, krem..." required />
+            <input id="color" required placeholder="Biru pastel, putih, krem…" />
           </label>
 
+          <!-- INPUT: Luas -->
           <label>Luas Ruangan (m²)
-            <input type="number" id="size" placeholder="20" required />
+            <input id="size" type="number" required placeholder="20" />
           </label>
 
+          <!-- INPUT: Jenis Ruangan -->
           <label>Jenis Ruangan
-            <input type="text" id="roomType" placeholder="Ruang tamu, kamar tidur..." required />
+            <input id="roomType" required placeholder="Ruang tamu, kamar tidur…" />
           </label>
 
+          <!-- INPUT: Budget -->
           <label>Budget (juta)
-            <input type="range" id="budget" min="5" max="500" value="50"
+            <input id="budget" type="range" min="5" max="500" value="50"
                    oninput="budgetLabel.innerText=this.value+' jt'" />
           </label>
 
@@ -62,6 +75,7 @@
             <strong id="budgetLabel">50 jt</strong>
           </div>
 
+          <!-- INPUT: Gaya -->
           <label>Gaya Interior
             <select id="style" required>
               <option value="modern minimalist">Modern Minimalis</option>
@@ -72,75 +86,90 @@
             </select>
           </label>
 
-          <div class="fullwidth">
-            <button id="generateBtn" class="btn primary fullwidth">Generate</button>
-          </div>
+          <!-- BUTTON: Generate -->
+          <button id="generateBtn" class="btn primary fullwidth">Generate</button>
 
         </form>
       </div>
 
-      <!-- LOADING TEXT -->
+      <!-- ============================
+           LOADING: TEXT
+      ============================ -->
       <div id="loadingText" class="loading" hidden>
         <div class="loader-text"><div></div></div>
-        <p>Generating description…</p>
+        <p class="loading-label">Generating description…</p>
+
         <div class="progress-container">
           <div id="progressTextBar" class="progress-bar"></div>
         </div>
       </div>
 
-      <!-- LOADING IMAGES -->
+      <!-- ============================
+           LOADING: IMAGES
+      ============================ -->
       <div id="loadingImages" class="loading" hidden>
         <div class="loader-img"></div>
-        <p>Generating images…</p>
+        <p class="loading-label">Generating images…</p>
+
         <div class="progress-container">
           <div id="progressImageBar" class="progress-bar"></div>
         </div>
       </div>
 
-      <!-- TEXT RESULT -->
+      <!-- ============================
+           RESULT: TEXT
+      ============================ -->
       <div id="textCard" class="card" hidden>
         <h3>Interior Description</h3>
         <div id="textResult" class="text-result"></div>
       </div>
 
-      <!-- IMAGE RESULT -->
+      <!-- ============================
+           RESULT: IMAGES
+      ============================ -->
       <div id="imagesCard" class="card" hidden>
         <h3>Generated Images</h3>
         <div id="imageGrid" class="image-grid"></div>
       </div>
 
     </section>
-
-    <!-- PAGE: HISTORY -->
+    <!-- ============================
+         PAGE: HISTORY
+    ============================ -->
     <section id="page-history" class="page">
       <div class="card">
         <h2>History</h2>
-        <p class="muted">Saved designs (stored locally).</p>
+        <p class="muted">Saved designs from this device only.</p>
+
         <div id="historyList" class="history-list"></div>
-        <button id="clearHistory" class="btn outline" style="margin-top:12px;">Clear History</button>
+
+        <button id="clearHistory" class="btn outline" style="margin-top:12px;">
+          Clear History
+        </button>
       </div>
     </section>
 
-    <!-- PAGE: PROFILE -->
+    <!-- ============================
+         PAGE: PROFILE
+    ============================ -->
     <section id="page-profile" class="page">
       <div class="card">
-        <h2>Profile</h2>
-        <p class="muted">Device-only profile settings.</p>
-        <label style="margin-top:12px;">
-          Dark Mode  
-          <input id="toggleDark" type="checkbox" />
+        <h2>Appearance</h2>
+        <p class="muted">Customize your theme preference.</p>
+
+        <label class="switch-row">
+          <span>Dark Mode</span>
+          <input type="checkbox" id="toggleDark">
         </label>
       </div>
     </section>
 
   </main>
 
-  <!-- Floating FAB -->
-  <button id="fabGenerate" class="fab" title="Generate new design">
-    New
-  </button>
+  <!-- FLOATING ACTION BUTTON -->
+  <button id="fabGenerate" class="fab">New</button>
 
-  <!-- Bottom Tab Bar -->
+  <!-- iOS BOTTOM TAB BAR -->
   <nav class="tabbar">
     <button class="tab active" data-target="page-home">Home</button>
     <button class="tab" data-target="page-generate">Generate</button>
@@ -148,20 +177,28 @@
     <button class="tab" data-target="page-profile">Profile</button>
   </nav>
 
-  <!-- Modal (iOS sheet) -->
+  <!-- ============================
+       iOS BOTTOM SHEET MODAL
+  ============================ -->
   <div id="modal" class="modal" aria-hidden="true">
     <div class="sheet">
       <div class="sheet-handle"></div>
+
       <div class="sheet-body">
         <div id="modalContent"></div>
+
         <div class="sheet-actions">
           <button id="modalClose" class="btn outline">Close</button>
-          <a id="modalDownload" class="btn primary" download="design.png">Download</a>
+          <a id="modalDownload" class="btn primary" download="design.png">
+            Download
+          </a>
         </div>
       </div>
     </div>
   </div>
 
+  <!-- MAIN SCRIPT -->
   <script src="js/app.js"></script>
+
 </body>
 </html>
