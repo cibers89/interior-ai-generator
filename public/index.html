@@ -1,1 +1,59 @@
-<html><body>Interior AI Generator</body></html>
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Interior AI Generator</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body class="min-h-screen py-8">
+  <div class="container">
+    <header class="flex items-center justify-between mb-6">
+      <h1 class="text-2xl font-bold">Interior AI Generator</h1>
+      <div class="flex items-center gap-3">
+        <button id="darkToggle" class="px-3 py-1 border rounded">Toggle Dark</button>
+      </div>
+    </header>
+
+    <main class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <section class="card md:col-span-1">
+        <label class="block font-medium">Jenis Ruangan</label>
+        <select id="jenis" class="mt-1 w-full rounded border p-2">
+          <option>Ruang Tamu</option>
+          <option>Kamar Tidur</option>
+          <option>Dapur</option>
+          <option>Kantor Rumah</option>
+        </select>
+
+        <label class="block font-medium mt-3">Luas (m²)</label>
+        <input id="luas" type="number" class="mt-1 w-full rounded border p-2" placeholder="25">
+
+        <label class="block font-medium mt-3">Gaya Desain</label>
+        <input id="gaya" class="mt-1 w-full rounded border p-2" placeholder="Minimalis Modern">
+
+        <label class="block font-medium mt-3">Warna Dominan</label>
+        <input id="warna" class="mt-1 w-full rounded border p-2" placeholder="Earth tone">
+
+        <label class="block font-medium mt-3">Budget</label>
+        <input id="budget" class="mt-1 w-full rounded border p-2" placeholder="20 juta - 40 juta">
+
+        <label class="block font-medium mt-3">Kebutuhan Khusus</label>
+        <textarea id="khusus" class="mt-1 w-full rounded border p-2" rows="3"></textarea>
+
+        <label class="block font-medium mt-3">Jumlah Gambar</label>
+        <input id="num_images" type="number" min="1" max="4" value="2" class="mt-1 w-full rounded border p-2">
+
+        <button id="generate" class="mt-4 w-full bg-blue-600 text-white p-3 rounded">Generate Design + Images</button>
+      </section>
+
+      <section class="card md:col-span-2">
+        <div id="resultText" class="min-h-[180px]">Hasil desain akan muncul di sini.</div>
+        <div id="images" class="mt-4 grid grid-cols-1 gap-4"></div>
+      </section>
+    </main>
+  </div>
+
+  <script src="/js/app.js"></script>
+</body>
+</html>
