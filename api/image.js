@@ -16,8 +16,7 @@ export default async function handler(req, res) {
     if (!HF_KEY)
       return res.status(500).json({ error: "Missing HF_API_KEY" });
 
-    // ❗ THIS IS THE ONLY CORRECT ENDPOINT FOR SDXL IMAGES
-    const API_URL = `https://api-inference.huggingface.co/models/${MODEL}`;
+    const API_URL = `https://router.huggingface.co/${MODEL}`;
 
     const images = [];
 
@@ -26,37 +25,62 @@ export default async function handler(req, res) {
         method: "POST",
         headers: {
           Authorization: `Bearer ${HF_KEY}`,
-          Accept: "image/png", // force PNG
-          "Content-Type": "application/json",
+          "Content-Type": "application/json"
         },
         body: JSON.stringify({
           inputs: prompt,
-          options: { wait_for_model: true },
-        }),
+          parameters: {},
+          options: { wait_for_model: true }
+        })
       });
 
-      const type = response.headers.get("content-type") || "";
+      const contentType = response.headers.get("content-type") || "";
 
-      // HuggingFace returns JSON when:
-      // - model is loading
-      // - token missing permission
-      // - model not found
-      // - rate limit
-      if (type.includes("application/json")) {
+      // ❗ Router returns errors as JSON
+      if (contentType.includes("application/json")) {
         const err = await response.json();
         return res.status(500).json({
-          error: err.error || JSON.stringify(err),
+          error: err.error || JSON.stringify(err)
         });
       }
 
-      // Binary PNG → Buffer → Base64 image
-      const buffer = Buffer.from(await response.arrayBuffer());
-      images.push(`data:image/png;base64,${buffer.toString("base64")}`);
+      // ❗ Router returns MULTIPART response for images
+      if (contentType.startsWith("multipart/")) {
+        const boundary = contentType.split("boundary=")[1];
+        const text = await response.text();
+
+        // Extract base64 data from multipart
+        const parts = text.split(`--${boundary}`);
+        let foundImage = null;
+
+        for (const part of parts) {
+          if (part.includes("image/")) {
+            // Take everything after two CRLF as body
+            const body = part.split("\r\n\r\n")[1];
+            foundImage = body.trim();
+            break;
+          }
+        }
+
+        if (!foundImage) {
+          return res.status(500).json({
+            error: "No image found in multipart response."
+          });
+        }
+
+        // HF router already returns base64 encoded images
+        images.push(`data:image/png;base64,${foundImage}`);
+        continue;
+      }
+
+      return res.status(500).json({
+        error: "Unknown content-type from HF router: " + contentType
+      });
     }
 
     return res.status(200).json({ images });
   } catch (err) {
-    console.error("IMAGE ERROR:", err);
+    console.error("HF ROUTER ERROR:", err);
     return res.status(500).json({ error: String(err) });
   }
 }
