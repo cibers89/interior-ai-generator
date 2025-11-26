@@ -54,7 +54,7 @@ body {
   margin-bottom: 14px;
 }
 
-/* FORM LABEL */
+/* FORM LABELS */
 label {
   display: block;
   font-weight: 600;
@@ -117,6 +117,30 @@ input[type="range"]::-webkit-slider-thumb {
   background: #1e569f;
 }
 
+/* BUTTON LOADING */
+.btn.loading {
+  background: #1e569f !important;
+  cursor: not-allowed !important;
+  opacity: 0.85;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.spinner-btn {
+  margin-left: 10px;
+  width: 16px;
+  height: 16px;
+  border: 3px solid rgba(255,255,255,0.4);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
 /* IMAGE GRID */
 .image-grid {
   display: grid;
@@ -149,7 +173,7 @@ input[type="range"]::-webkit-slider-thumb {
   margin-bottom: 10px;
 }
 
-/* LOADING TEXT (floating dots) */
+/* FLOATING DOTS LOADER */
 .loader-text {
   width: 60px;
   height: 20px;
@@ -169,20 +193,15 @@ input[type="range"]::-webkit-slider-thumb {
   animation: bubble 0.6s infinite ease-in-out;
 }
 
-.loader-text div {
-  animation-delay: 0.2s;
-}
-
-.loader-text::after {
-  animation-delay: 0.4s;
-}
+.loader-text div { animation-delay: 0.2s; }
+.loader-text::after { animation-delay: 0.4s; }
 
 @keyframes bubble {
   0%, 100% { transform: translateY(0); opacity: 0.5; }
   50% { transform: translateY(-8px); opacity: 1; }
 }
 
-/* LOADING IMAGES (ripple) */
+/* IMAGE LOADER (ripple) */
 .loader-img {
   width: 55px;
   height: 55px;
@@ -194,35 +213,28 @@ input[type="range"]::-webkit-slider-thumb {
 }
 
 @keyframes ripple {
-  from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
+}
+
+/* PROGRESS BAR */
+.progress-container {
+  width: 100%;
+  background: #dfeaff;
+  height: 10px;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-top: 10px;
+}
+
+.progress-bar {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #6aa7ff, #2a6acc);
+  border-radius: 8px;
+  transition: width 0.35s ease;
 }
 
 .loading {
   text-align: center;
   margin-top: 25px;
-}
-
-/* BUTTON LOADING STATE */
-.btn.loading {
-  background: #1e569f !important;
-  cursor: not-allowed !important;
-  opacity: 0.8;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.btn .spinner-btn {
-  margin-left: 10px;
-  width: 16px;
-  height: 16px;
-  border: 3px solid rgba(255,255,255,0.4);
-  border-top-color: #fff;
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
 }
