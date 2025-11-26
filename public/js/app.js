@@ -9,38 +9,52 @@ document.getElementById("designForm").addEventListener("submit", async (e) => {
 
   const textResult = document.getElementById("textResult");
   const imageGrid = document.getElementById("imageGrid");
-  const loading = document.getElementById("loading");
 
+  // >>> LOADER ELEMENTS
+  const loadingText = document.getElementById("loadingText");
+  const loadingImages = document.getElementById("loadingImages");
+
+  // Clear UI
   textResult.innerHTML = "";
   imageGrid.innerHTML = "";
-  loading.style.display = "block";
+  loadingText.style.display = "block";
+  loadingImages.style.display = "none";
 
-  // Generate description from Groq
+  // 1) Generate description from Groq
   const textResponse = await fetch("/api/text", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      prompt: `Buatkan deskripsi interior untuk ${roomType} dengan warna ${color}, luas ${size}m2, gaya ${style}, dengan budget sekitar ${budget} juta rupiah.`
+      prompt: `Buatkan deskripsi interior untuk ${roomType} dengan warna ${color}, luas ${size}m2, gaya ${style}, dan budget ${budget} juta rupiah.`
     }),
   });
 
   const textData = await textResponse.json();
-  textResult.innerHTML = `<p>${textData.text}</p>`;
+  loadingText.style.display = "none";
+
+  // Format text lebih rapih
+  textResult.innerHTML = textData.text
+    .split(". ")
+    .map((sentence) => `<p>${sentence.trim()}.</p>`)
+    .join("");
+
+  // 2) Start image loader
+  loadingImages.style.display = "block";
 
   // CAMERA ANGLES for 4 images
-	const angles = [
-	  "room view from the corner",
-	  "front view of the room",
-	  "slightly top side view",
-	  "side cinematic view"
-	];
+  const angles = [
+    "room view from the corner",
+    "front view of the room",
+    "slightly top side view",
+    "side cinematic view"
+  ];
 
-	const prompts = angles.map(
-	  (angle) =>
-		`${style} ${roomType} interior, ${color} theme, ${angle}`
-	);
+  const prompts = angles.map(
+    (angle) =>
+      `${style} ${roomType} interior, ${color} theme, ${angle}`
+  );
 
-
+  // 3) Image API
   const imgRes = await fetch("/api/image", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -48,11 +62,11 @@ document.getElementById("designForm").addEventListener("submit", async (e) => {
   });
 
   const imgData = await imgRes.json();
+  loadingImages.style.display = "none";
 
-  loading.style.display = "none";
-
+  // 4) Render images
   if (!imgData.images) {
-    imageGrid.innerHTML = "<p>Gagal membuat gambar.</p>";
+    imageGrid.innerHTML = "<p>Terjadi kesalahan saat membuat gambar.</p>";
     return;
   }
 
