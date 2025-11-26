@@ -3,6 +3,6 @@
   "version": "1.0.0",
   "private": true,
   "scripts": { "start": "vercel dev", "lint": "echo \"no lint configured\"" },
-  "dependencies": { "node-fetch": "^3.4.1" },
+  "dependencies": { "node-fetch": "^3.3.2" },
   "engines": { "node": ">=18" }
 }
