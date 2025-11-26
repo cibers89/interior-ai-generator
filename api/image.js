@@ -1,5 +1,21 @@
 import fetch from "node-fetch";
 
+// FREE PUBLIC HF SPACE MODELS
+const MODELS = [
+  {
+    name: "FLUX-SCHNELL",
+    url: "https://black-forest-labs-flux-1-schnell.hf.space/run/predict"
+  },
+  {
+    name: "SDXL-LIGHTNING",
+    url: "https://byte-dance-sdxl-lightning.hf.space/run/predict"
+  },
+  {
+    name: "PLAYGROUND-V2.5",
+    url: "https://playgroundai-playground-v2-5.hf.space/run/predict"
+  }
+];
+
 export default async function handler(req, res) {
   if (req.method !== "POST")
     return res.status(405).json({ error: "Method not allowed" });
@@ -8,75 +24,52 @@ export default async function handler(req, res) {
     const { prompt } = req.body || {};
     if (!prompt) return res.status(400).json({ error: "Missing prompt" });
 
-    const REPLICATE_TOKEN = process.env.REPLICATE_API_TOKEN;
-    if (!REPLICATE_TOKEN) {
-      return res.status(500).json({ error: "Missing REPLICATE_API_TOKEN" });
-    }
+    let lastError = null;
 
-    // FREE MODEL: FLUX-SCHNELL (FAST & FREE)
-    const model = "black-forest-labs/flux-schnell";
+    for (const model of MODELS) {
+      try {
+        console.log(`🔥 Trying model: ${model.name}`);
 
-    const apiURL = `https://api.replicate.com/v1/models/${model}/predictions`;
+        const response = await fetch(model.url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ data: [prompt] })
+        });
 
-    const response = await fetch(apiURL, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${REPLICATE_TOKEN}`,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        input: {
-          prompt: prompt,
-          width: 1024,
-          height: 1024
+        const result = await response.json();
+
+        // If Space returns error
+        if (result.error) {
+          console.warn(`⚠ Model ${model.name} error:`, result.error);
+          lastError = result.error;
+          continue; // try next model
         }
-      })
-    });
 
-    const data = await response.json();
+        // HF Spaces return base64 inside result.data[0]
+        const base64 = result?.data?.[0];
 
-    // If API error
-    if (!response.ok) {
-      return res.status(500).json({ error: data });
-    }
-
-    // Replicate returns a "prediction" object.
-    // Need to poll the endpoint until it's done.
-    let prediction = data;
-
-    while (prediction.status !== "succeeded" && prediction.status !== "failed") {
-      await new Promise((r) => setTimeout(r, 1200));
-
-      const poll = await fetch(apiURL + "/" + prediction.id, {
-        headers: {
-          Authorization: `Bearer ${REPLICATE_TOKEN}`,
-          "Content-Type": "application/json"
+        if (!base64) {
+          console.warn(`⚠ Model ${model.name} returned no image`);
+          continue;
         }
-      });
 
-      prediction = await poll.json();
+        console.log(`✅ Success with ${model.name}`);
+        return res.status(200).json({ images: [base64], model: model.name });
+      } catch (err) {
+        console.warn(`⚠ Model ${model.name} failed:`, err);
+        lastError = err.message;
+        continue;
+      }
     }
 
-    if (prediction.status === "failed") {
-      return res.status(500).json({
-        error: prediction.error || "Image generation failed"
-      });
-    }
-
-    // output = array of image URLs
-    const imageUrl = prediction.output?.[0];
-
-    // Convert URL -> base64 (for frontend simplicity)
-    const imgReq = await fetch(imageUrl);
-    const buffer = Buffer.from(await imgReq.arrayBuffer());
-    const base64 = buffer.toString("base64");
-
-    return res.status(200).json({
-      images: [`data:image/png;base64,${base64}`]
+    // If all models fail
+    return res.status(500).json({
+      error: "All image models failed",
+      details: lastError
     });
 
   } catch (err) {
-    console.error("REPLICATE ERROR:", err);
+    console.error("IMAGE MULTI-BACKUP ERROR:", err);
     return res.status(500).json({ error: String(err) });
   }
 }
