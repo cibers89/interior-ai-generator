@@ -1,3 +1,18 @@
+function simulateProgress(barId, duration = 2500) {
+  const bar = document.getElementById(barId);
+  bar.style.width = "0%";
+
+  let progress = 0;
+  const step = 100 / (duration / 120);
+
+  return setInterval(() => {
+    if (progress < 90) {
+      progress += step;
+      bar.style.width = progress + "%";
+    }
+  }, 120);
+}
+
 document.getElementById("designForm").addEventListener("submit", async (e) => {
   e.preventDefault();
 
@@ -13,22 +28,21 @@ document.getElementById("designForm").addEventListener("submit", async (e) => {
   const loadingText = document.getElementById("loadingText");
   const loadingImages = document.getElementById("loadingImages");
 
-  // === BUTTON ELEMENT ===
   const btn = document.getElementById("generateBtn");
 
-  // CLEAR UI
   textResult.innerHTML = "";
   imageGrid.innerHTML = "";
 
-  // === ACTIVATE BUTTON LOADING STATE ===
+  // BUTTON STATE
   btn.disabled = true;
   btn.classList.add("loading");
   btn.innerHTML = `Loading <div class="spinner-btn"></div>`;
 
+  // START TEXT LOADING
   loadingText.style.display = "block";
-  loadingImages.style.display = "none";
+  const textProgress = simulateProgress("progressTextBar", 2500);
 
-  // ==== TEXT REQUEST (GROQ) ====
+  // TEXT API REQUEST
   const textResponse = await fetch("/api/text", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -38,15 +52,23 @@ document.getElementById("designForm").addEventListener("submit", async (e) => {
   });
 
   const textData = await textResponse.json();
-  loadingText.style.display = "none";
 
+  // STOP TEXT LOADING
+  clearInterval(textProgress);
+  document.getElementById("progressTextBar").style.width = "100%";
+  setTimeout(() => {
+    loadingText.style.display = "none";
+  }, 300);
+
+  // FORMAT TEXT
   textResult.innerHTML = textData.text
     .split(". ")
     .map((sentence) => `<p>${sentence.trim()}.</p>`)
     .join("");
 
-  // ==== IMAGE LOADING ====
+  // START IMAGE LOADING
   loadingImages.style.display = "block";
+  const imgProgress = simulateProgress("progressImageBar", 3500);
 
   const angles = [
     "room view from the corner",
@@ -67,8 +89,15 @@ document.getElementById("designForm").addEventListener("submit", async (e) => {
   });
 
   const imgData = await imgRes.json();
-  loadingImages.style.display = "none";
 
+  // STOP IMAGE LOADING
+  clearInterval(imgProgress);
+  document.getElementById("progressImageBar").style.width = "100%";
+  setTimeout(() => {
+    loadingImages.style.display = "none";
+  }, 300);
+
+  // RENDER IMAGES
   if (!imgData.images) {
     imageGrid.innerHTML = "<p>Gagal membuat gambar.</p>";
   } else {
@@ -79,7 +108,7 @@ document.getElementById("designForm").addEventListener("submit", async (e) => {
     });
   }
 
-  // === RESTORE BUTTON STATE ===
+  // RESTORE BUTTON
   btn.disabled = false;
   btn.classList.remove("loading");
   btn.innerHTML = `Generate Design`;
