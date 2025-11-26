@@ -11,12 +11,13 @@ export default async function handler(req, res) {
     const HF_KEY = process.env.HF_API_KEY;
     const MODEL =
       process.env.HF_MODEL ||
-      "stabilityai/stable-diffusion-xl-base-1.0";  // safe model
+      "stabilityai/stable-diffusion-xl-base-1.0";
 
     if (!HF_KEY)
       return res.status(500).json({ error: "Missing HF_API_KEY" });
 
-    const API_URL = `https://router.huggingface.co/${MODEL}`;
+    // ❗ THIS IS THE ONLY CORRECT ENDPOINT FOR SDXL IMAGES
+    const API_URL = `https://api-inference.huggingface.co/models/${MODEL}`;
 
     const images = [];
 
@@ -25,7 +26,7 @@ export default async function handler(req, res) {
         method: "POST",
         headers: {
           Authorization: `Bearer ${HF_KEY}`,
-          Accept: "image/png",
+          Accept: "image/png", // force PNG
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
@@ -34,9 +35,13 @@ export default async function handler(req, res) {
         }),
       });
 
-      const type = response.headers.get("content-type");
+      const type = response.headers.get("content-type") || "";
 
-      // If HF returns JSON → error or waiting model
+      // HuggingFace returns JSON when:
+      // - model is loading
+      // - token missing permission
+      // - model not found
+      // - rate limit
       if (type.includes("application/json")) {
         const err = await response.json();
         return res.status(500).json({
@@ -44,11 +49,9 @@ export default async function handler(req, res) {
         });
       }
 
-      // Convert buffer > base64
+      // Binary PNG → Buffer → Base64 image
       const buffer = Buffer.from(await response.arrayBuffer());
-      const base64 = buffer.toString("base64");
-
-      images.push(`data:image/png;base64,${base64}`);
+      images.push(`data:image/png;base64,${buffer.toString("base64")}`);
     }
 
     return res.status(200).json({ images });
