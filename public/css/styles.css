@@ -1,4 +1,4 @@
-/* GENERAL RESET */
+/* RESET */
 * {
   margin: 0;
   padding: 0;
@@ -9,17 +9,17 @@
 body {
   background: #f3f8ff;
   color: #333;
-  padding-bottom: 50px;
+  padding-bottom: 60px;
 }
 
 /* HEADER */
 .header {
   text-align: center;
-  padding: 40px 20px;
-  background: linear-gradient(135deg, #b8d8ff, #dbeaff);
+  padding: 45px 20px;
+  background: linear-gradient(135deg, #bcd9ff, #e4f0ff);
   color: #033a7c;
   margin-bottom: 30px;
-  border-bottom: 3px solid #a5c8ff;
+  border-bottom: 3px solid #a8c8ff;
 }
 
 .header h1 {
@@ -28,8 +28,8 @@ body {
 }
 
 .header p {
-  font-size: 1.1rem;
   margin-top: 6px;
+  font-size: 1.05rem;
 }
 
 /* MAIN CONTAINER */
@@ -39,58 +39,86 @@ body {
   padding: 0 20px;
 }
 
-/* CARD UI */
+/* CARD */
 .card {
   background: white;
   border-radius: 14px;
-  padding: 22px;
+  padding: 24px;
   margin-bottom: 25px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-  border: 1px solid #e3efff;
+  border: 1px solid #dceaff;
 }
 
 .card h2 {
-  color: #2a6acb;
+  color: #2263c9;
   margin-bottom: 14px;
 }
 
-/* FORM */
+/* FORM LABELS */
 label {
   display: block;
   font-weight: 600;
-  margin-top: 12px;
-  color: #2a6acb;
+  margin-top: 14px;
+  color: #2a66cc;
 }
 
-input, select {
+/* INPUT & SELECT */
+input,
+select {
   width: 100%;
   padding: 12px;
   margin-top: 6px;
   border-radius: 8px;
-  border: 1px solid #c6dafb;
-  background: #f8fbff;
+  border: 1px solid #c7dafb;
+  background: #f7fbff;
   font-size: 15px;
+}
+
+/* RANGE SLIDER */
+input[type="range"] {
+  cursor: pointer;
+  -webkit-appearance: none;
+  height: 6px;
+  background: #cfe0ff;
+  border-radius: 10px;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  background: #2a6acc;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+#budgetLabel {
+  margin-top: 5px;
+  color: #1d4d91;
+  font-weight: 600;
+  display: inline-block;
 }
 
 /* BUTTON */
 .btn {
   width: 100%;
-  padding: 14px;
-  background: #2a6acb;
-  border: none;
+  padding: 15px;
+  background: #2a6acc;
   color: white;
-  font-size: 1rem;
-  margin-top: 20px;
+  border: none;
   border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  margin-top: 22px;
   cursor: pointer;
-  transition: 0.25s;
+  transition: 0.25s ease;
 }
 
 .btn:hover {
-  background: #1d589f;
+  background: #1e569f;
 }
 
-/* IMAGE GRID (4 IMAGES) */
+/* IMAGE GRID */
 .image-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -100,9 +128,9 @@ input, select {
 
 .image-grid img {
   width: 100%;
-  border-radius: 10px;
-  border: 2px solid #e0ecff;
-  transition: 0.3s;
+  border-radius: 12px;
+  border: 2px solid #e2edff;
+  transition: 0.25s ease;
 }
 
 .image-grid img:hover {
@@ -112,22 +140,20 @@ input, select {
 /* LOADING SPINNER */
 .loading {
   text-align: center;
-  margin-top: 20px;
   padding: 20px;
+  margin-top: 20px;
 }
 
 .spinner {
   width: 55px;
   height: 55px;
-  margin: auto;
-  border: 6px solid #c8dbff;
-  border-top: 6px solid #2a6acb;
+  border: 6px solid #cbdcff;
+  border-top: 6px solid #2a6acc;
   border-radius: 50%;
+  margin: auto;
   animation: spin 0.9s linear infinite;
 }
 
 @keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
+  to { transform: rotate(360deg); }
 }
