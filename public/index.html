@@ -6,42 +6,63 @@
   <title>D2F Interior Design — iOS Pack</title>
   <link rel="stylesheet" href="css/styles.css" />
 </head>
+
 <body>
-  <!-- Large header -->
+
+  <!-- iOS Large Header -->
   <header class="ios-header">
     <div class="ios-header-inner">
       <h1>D2F Interior Design</h1>
-      <p class="sub">Design your space with AI</p>
+      <p class="sub">Design your dream space with AI — iOS experience</p>
     </div>
   </header>
 
-  <!-- Main app container -->
+  <!-- Main Application Container -->
   <main class="app">
-    <!-- Pages container -->
+
+    <!-- PAGE: HOME -->
     <section id="page-home" class="page active">
       <div class="card hero-card">
         <h2>Welcome</h2>
-        <p>Explore interior ideas, generate multi-angle images, and save favorites. Tap <strong>Generate</strong> to start.</p>
+        <p>Generate interior ideas in seconds. Use AI to visualize 4 angles instantly.</p>
         <div class="hero-actions">
-          <button id="btnOpenGenerate" class="btn small">Generate Now</button>
+          <button id="btnOpenGenerate" class="btn small primary">New Design</button>
           <button id="btnOpenHistory" class="btn small outline">History</button>
         </div>
       </div>
     </section>
 
+    <!-- PAGE: GENERATE -->
     <section id="page-generate" class="page">
+
+      <!-- FORM CARD -->
       <div class="card">
-        <h2>Create Interior Design</h2>
+        <h2>Create New Design</h2>
 
         <form id="designForm" class="form-grid">
-          <label>Warna Utama<input type="text" id="color" placeholder="putih, biru pastel, krem" required></label>
-          <label>Luas Ruangan (m²)<input type="number" id="size" placeholder="mis. 20" required></label>
-          <label>Jenis Ruangan<input type="text" id="roomType" placeholder="ruang tamu, kamar tidur" required></label>
 
-          <label>Budget (juta)<input type="range" id="budget" min="5" max="500" value="50" oninput="budgetLabel.innerText=this.value+' jt'"></label>
-          <div class="budget-label"><strong id="budgetLabel">50 jt</strong></div>
+          <label>Warna Utama
+            <input type="text" id="color" placeholder="Biru pastel, putih, krem..." required />
+          </label>
 
-          <label>Style
+          <label>Luas Ruangan (m²)
+            <input type="number" id="size" placeholder="20" required />
+          </label>
+
+          <label>Jenis Ruangan
+            <input type="text" id="roomType" placeholder="Ruang tamu, kamar tidur..." required />
+          </label>
+
+          <label>Budget (juta)
+            <input type="range" id="budget" min="5" max="500" value="50"
+                   oninput="budgetLabel.innerText=this.value+' jt'" />
+          </label>
+
+          <div class="budget-label">
+            <strong id="budgetLabel">50 jt</strong>
+          </div>
+
+          <label>Gaya Interior
             <select id="style" required>
               <option value="modern minimalist">Modern Minimalis</option>
               <option value="luxury modern">Modern Mewah</option>
@@ -52,63 +73,74 @@
           </label>
 
           <div class="fullwidth">
-            <button id="generateBtn" class="btn primary">Generate Design</button>
+            <button id="generateBtn" class="btn primary fullwidth">Generate</button>
           </div>
+
         </form>
       </div>
 
-      <!-- loaders -->
+      <!-- LOADING TEXT -->
       <div id="loadingText" class="loading" hidden>
         <div class="loader-text"><div></div></div>
         <p>Generating description…</p>
-        <div class="progress-container"><div id="progressTextBar" class="progress-bar"></div></div>
+        <div class="progress-container">
+          <div id="progressTextBar" class="progress-bar"></div>
+        </div>
       </div>
 
+      <!-- LOADING IMAGES -->
       <div id="loadingImages" class="loading" hidden>
         <div class="loader-img"></div>
         <p>Generating images…</p>
-        <div class="progress-container"><div id="progressImageBar" class="progress-bar"></div></div>
+        <div class="progress-container">
+          <div id="progressImageBar" class="progress-bar"></div>
+        </div>
       </div>
 
-      <!-- text result -->
+      <!-- TEXT RESULT -->
       <div id="textCard" class="card" hidden>
         <h3>Interior Description</h3>
         <div id="textResult" class="text-result"></div>
       </div>
 
-      <!-- image grid -->
+      <!-- IMAGE RESULT -->
       <div id="imagesCard" class="card" hidden>
-        <h3>Images (4 angles)</h3>
+        <h3>Generated Images</h3>
         <div id="imageGrid" class="image-grid"></div>
       </div>
+
     </section>
 
+    <!-- PAGE: HISTORY -->
     <section id="page-history" class="page">
       <div class="card">
         <h2>History</h2>
-        <p class="muted">Saved designs (stored locally on this device).</p>
+        <p class="muted">Saved designs (stored locally).</p>
         <div id="historyList" class="history-list"></div>
-        <div style="margin-top:12px;">
-          <button id="clearHistory" class="btn outline">Clear History</button>
-        </div>
+        <button id="clearHistory" class="btn outline" style="margin-top:12px;">Clear History</button>
       </div>
     </section>
 
+    <!-- PAGE: PROFILE -->
     <section id="page-profile" class="page">
       <div class="card">
         <h2>Profile</h2>
-        <p class="muted">D2F Demo • Local-only profile. No account needed.</p>
-        <div style="margin-top:12px;">
-          <label>Dark mode <input id="toggleDark" type="checkbox"></label>
-        </div>
+        <p class="muted">Device-only profile settings.</p>
+        <label style="margin-top:12px;">
+          Dark Mode  
+          <input id="toggleDark" type="checkbox" />
+        </label>
       </div>
     </section>
+
   </main>
 
-  <!-- Floating Generate FAB -->
-  <button id="fabGenerate" class="fab" title="Generate design">Generate</button>
+  <!-- Floating FAB -->
+  <button id="fabGenerate" class="fab" title="Generate new design">
+    New
+  </button>
 
-  <!-- Bottom tab bar -->
+  <!-- Bottom Tab Bar -->
   <nav class="tabbar">
     <button class="tab active" data-target="page-home">Home</button>
     <button class="tab" data-target="page-generate">Generate</button>
@@ -116,7 +148,7 @@
     <button class="tab" data-target="page-profile">Profile</button>
   </nav>
 
-  <!-- Preview Modal (iOS sheet) -->
+  <!-- Modal (iOS sheet) -->
   <div id="modal" class="modal" aria-hidden="true">
     <div class="sheet">
       <div class="sheet-handle"></div>
