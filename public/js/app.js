@@ -1,91 +1,63 @@
-// Frontend logic: enhanced UI, toasts, dark mode, skeletons
+document.getElementById("designForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
 
-const $ = (id) => document.getElementById(id);
+  const color = document.getElementById("color").value;
+  const size = document.getElementById("size").value;
+  const roomType = document.getElementById("roomType").value;
+  const budget = document.getElementById("budget").value;
+  const style = document.getElementById("style").value;
 
-function toast(msg, timeout = 3500) {
-  const t = document.createElement('div');
-  t.className = 'fixed bottom-6 right-6 bg-black text-white px-4 py-2 rounded shadow';
-  t.innerText = msg;
-  document.body.appendChild(t);
-  setTimeout(() => t.remove(), timeout);
-}
+  const textResult = document.getElementById("textResult");
+  const imageGrid = document.getElementById("imageGrid");
+  const loading = document.getElementById("loading");
 
-function setLoading(isLoading) {
-  const btn = $('generate');
-  if (isLoading) { btn.disabled = true; btn.innerText = 'Generating...'; }
-  else { btn.disabled = false; btn.innerText = 'Generate Design + Images'; }
-}
+  textResult.innerHTML = "";
+  imageGrid.innerHTML = "";
+  loading.style.display = "block";
 
-async function postJson(url, body) {
-  const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
-  if (!res.ok) {
-    const t = await res.text();
-    throw new Error(t || 'Request failed');
+  // Generate description from Groq
+  const textResponse = await fetch("/api/text", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      prompt: `Buatkan deskripsi interior untuk ${roomType} dengan warna ${color}, luas ${size}m2, gaya ${style}, dengan budget sekitar ${budget} juta rupiah.`
+    }),
+  });
+
+  const textData = await textResponse.json();
+  textResult.innerHTML = `<p>${textData.text}</p>`;
+
+  // CAMERA ANGLES for 4 images
+  const angles = [
+    "wide angle from corner",
+    "eye-level frontal view",
+    "slightly elevated view",
+    "side-angle cinematic view"
+  ];
+
+  const prompts = angles.map(
+    (angle) =>
+      `${style} ${roomType} interior, ${color} color palette, ${size}m2, budget ${budget} juta, ${angle}, realistic architectural photography`
+  );
+
+  const imgRes = await fetch("/api/image", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ prompts }),
+  });
+
+  const imgData = await imgRes.json();
+
+  loading.style.display = "none";
+
+  if (!imgData.images) {
+    imageGrid.innerHTML = "<p>Gagal membuat gambar.</p>";
+    return;
   }
-  return res.json();
-}
 
-function renderText(text) {
-  const out = $('resultText');
-  out.innerHTML = `<h3 class="font-semibold">Desain</h3><pre class="whitespace-pre-wrap">${text}</pre>`;
-}
-
-function renderImages(images) {
-  const container = $('images');
-  container.innerHTML = '';
-  images.forEach(src => {
-    const wrapper = document.createElement('div');
-    wrapper.className = 'card';
-    const img = document.createElement('img');
+  imgData.images.forEach((src) => {
+    const img = document.createElement("img");
     img.src = src;
-    img.className = 'rounded';
-    wrapper.appendChild(img);
-    container.appendChild(wrapper);
+    imageGrid.appendChild(img);
   });
-}
-
-async function onGenerate() {
-  const jenis = $('jenis').value;
-  const luas = $('luas').value;
-  const gaya = $('gaya').value;
-  const warna = $('warna').value;
-  const budget = $('budget').value;
-  const khusus = $('khusus').value;
-  const numImages = Math.min(4, Math.max(1, +$('num_images').value || 2));
-
-  const promptText = `Buatkan konsep desain interior rinci untuk:\n- Jenis ruangan: ${jenis}\n- Luas: ${luas} m²\n- Gaya: ${gaya}\n- Warna dominan: ${warna}\n- Budget: ${budget}\n- Kebutuhan khusus: ${khusus}\n\nBerikan: Konsep desain, layout, furniture, material, estimasi biaya.`;
-
-  const promptImage = `Interior design render of a ${jenis} in ${gaya} style, ${luas}m2, dominant colors ${warna}. Photorealistic interior photography, soft natural lighting, high detail.`;
-
-  try {
-    setLoading(true);
-    renderText('Menghasilkan teks...');
-    renderImages([]);
-
-    const textResp = await postJson('/api/text', { prompt: promptText });
-    renderText(textResp.text || 'No text returned');
-
-    $('images').innerHTML = '<div class="small">Menghasilkan gambar, tunggu sebentar...</div>';
-    const imgResp = await postJson('/api/image', { prompt: promptImage, num_images: numImages });
-
-    if (imgResp.error) throw new Error(imgResp.error);
-    renderImages(imgResp.images || []);
-    toast('Selesai!');
-  } catch (e) {
-    console.error(e);
-    renderText('Error: ' + (e.message || e));
-    toast('Terjadi error: ' + (e.message || e));
-  } finally {
-    setLoading(false);
-  }
-}
-
-function setup() {
-  $('generate').addEventListener('click', onGenerate);
-  $('darkToggle').addEventListener('click', () => {
-    const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-    document.documentElement.setAttribute('data-theme', theme === 'dark' ? 'dark' : '');
-  });
-}
-
-window.addEventListener('DOMContentLoaded', setup);
+});
