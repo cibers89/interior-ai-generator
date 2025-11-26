@@ -17,7 +17,7 @@ export default async function handler(req, res) {
         .json({ error: "Missing HF_API_KEY in environment" });
     }
 
-    const API_URL = `https://api-inference.huggingface.co/models/${MODEL}`;
+    const API_URL = `https://router.huggingface.co/${MODEL}`;
 
     const images = [];
 
