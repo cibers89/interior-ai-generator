@@ -1,233 +1,665 @@
-/* =========================
-   D2F iOS SUPER PACK STYLES
-   ========================= */
+/* ===========================================================
+   D2F Interior Design — iOS Super Pack (FULL VERSION)
+   Includes:
+   - iOS large header
+   - iOS cards (glassmorphism)
+   - 1-column form layout
+   - Dark mode full coverage
+   - iOS bottom tabbar
+   - iOS FAB button
+   - iOS bottom modal sheet
+   =========================================================== */
 
-* { margin:0; padding:0; box-sizing:border-box; }
-
-:root {
-  --bg:#eef4ff;
-  --card:#ffffffcc;
-  --accent:#2a6acc;
-  --muted:#6b7a90;
-  --glass-border:rgba(255,255,255,0.55);
-  --shadow:0 8px 30px rgba(20,30,60,0.08);
+/* RESET & BASE */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
 }
 
 html, body {
-  height:100%;
-  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Inter",system-ui;
-  background:var(--bg);
-  color:#213248;
-  -webkit-font-smoothing:antialiased;
+  height: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", system-ui;
+  -webkit-font-smoothing: antialiased;
+  color-scheme: light dark;
 }
 
-/* iOS Header */
+/* LIGHT THEME COLORS */
+:root {
+  --bg: #eef4ff;
+  --text: #24324A;
+  --text-muted: #6b7a90;
+  --card: rgba(255, 255, 255, 0.72);
+  --card-border: rgba(255, 255, 255, 0.55);
+  --accent: #2a6acc;
+  --accent-dark: #1f4f9b;
+  --shadow: 0 8px 26px rgba(18, 22, 40, 0.10);
+  --tab-bg: rgba(255, 255, 255, 0.7);
+  --modal-bg: rgba(255, 255, 255, 0.88);
+  --input-bg: #f6f8ff;
+  --input-border: #d3e1ff;
+  --progress-bg: #dfeaff;
+}
+
+/* DARK MODE COLORS */
+.dark {
+  --bg: #0f1218;
+  --text: #f0f3ff;
+  --text-muted: #8e98b4;
+  --card: rgba(34, 38, 48, 0.72);
+  --card-border: rgba(255, 255, 255, 0.08);
+  --accent: #4d89ff;
+  --accent-dark: #3d6de0;
+  --shadow: 0 8px 26px rgba(0, 0, 0, 0.35);
+  --tab-bg: rgba(20, 23, 30, 0.82);
+  --modal-bg: rgba(27, 30, 38, 0.92);
+  --input-bg: #1c1f27;
+  --input-border: #3a4255;
+  --progress-bg: #3a4255;
+}
+
+/* GLOBAL BACKGROUND */
+body {
+  background: var(--bg);
+  color: var(--text);
+  padding-bottom: 80px;
+}
+
+/* ===========================================================
+   iOS HEADER
+   =========================================================== */
 .ios-header {
-  padding:56px 18px 18px;
-  background:linear-gradient(160deg,#dfefff,#f6f9ff);
-  border-bottom:1px solid rgba(0,0,0,0.04);
+  padding: 58px 16px 22px;
+  background: linear-gradient(160deg, #dceaff, #f7f9ff);
+  border-bottom: 1px solid rgba(0,0,0,0.05);
 }
-.ios-header-inner { max-width:980px; margin:0 auto; text-align:center; }
-.ios-header h1 { font-size:28px; font-weight:700; color:#173962; }
-.ios-header .sub { color:var(--muted); margin-top:6px; }
+.dark .ios-header {
+  background: linear-gradient(160deg, #1b1e26, #101218);
+  border-bottom-color: rgba(255,255,255,0.05);
+}
 
-/* App layout */
-.app { max-width:980px; margin:14px auto; padding:0 16px 80px; }
+.ios-header-inner {
+  max-width: 900px;
+  margin: 0 auto;
+  text-align: center;
+}
 
-.page { display:none; }
-.page.active { display:block; }
+.ios-header h1 {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.3px;
+}
 
-/* iOS Card */
+.ios-header .sub {
+  font-size: 14px;
+  margin-top: 4px;
+  color: var(--text-muted);
+}
+
+/* ===========================================================
+   MAIN APP CONTAINER
+   =========================================================== */
+.app {
+  max-width: 900px;
+  margin: 18px auto;
+  padding: 0 16px 100px;
+}
+
+/* Pages */
+.page {
+  display: none;
+}
+.page.active {
+  display: block;
+}
+
+/* ===========================================================
+   iOS CARD (Glassmorphism style)
+   =========================================================== */
 .card {
-  background:var(--card);
-  backdrop-filter:blur(14px);
-  border-radius:22px;
-  padding:20px;
-  margin-bottom:22px;
-  border:1px solid var(--glass-border);
-  box-shadow:var(--shadow);
+  background: var(--card);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-radius: 22px;
+  padding: 20px;
+  margin-bottom: 22px;
+  border: 1px solid var(--card-border);
+  box-shadow: var(--shadow);
+  color: var(--text);
 }
 
-/* Form Grid (Default: 1 column) */
+.card h2,
+.card h3 {
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: var(--text);
+}
+
+/* Hero Card */
+.hero-card h2 {
+  font-size: 22px;
+}
+.hero-card p {
+  margin-bottom: 16px;
+  color: var(--text-muted);
+}
+
+.hero-actions {
+  display: flex;
+  gap: 12px;
+}
+
+/* ===========================================================
+   FORM — Always 1 column (desktop & mobile)
+   =========================================================== */
 .form-grid {
-  display:grid;
+  display: grid;
   grid-template-columns: 1fr;
-  gap:14px;
-  margin-top:10px;
-}
-.form-grid label {
-  font-size:15px;
-  font-weight:600;
-  color:#174a88;
-}
-.form-grid input,
-.form-grid select {
-  padding:12px;
-  border-radius:12px;
-  border:1px solid #d7e7ff;
-  background:#f8fbff;
-  font-size:15px;
+  gap: 16px;
+  margin-top: 18px;
 }
 
-/* Desktop = 2 columns */
-@media (min-width: 980px) {
-  .form-grid {
-    grid-template-columns: 1fr 1fr;
-  }
+.form-grid label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+input,
+select {
+  padding: 13px;
+  font-size: 15px;
+  border-radius: 14px;
+  border: 1px solid var(--input-border);
+  background: var(--input-bg);
+  color: var(--text);
+}
+
+input:focus,
+select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px rgba(80,140,255,0.25);
+}
+
+/* Range Slider */
+input[type="range"] {
+  appearance: none;
+  height: 6px;
+  border-radius: 8px;
+  background: var(--progress-bg);
+}
+input[type="range"]::-webkit-slider-thumb {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  background: var(--accent);
+  border-radius: 50%;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
 }
 
 /* Budget label */
 .budget-label {
-  font-size:15px;
-  font-weight:700;
-  color:#174a88;
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--text);
 }
 
-/* Buttons */
+/* ===========================================================
+   BUTTONS
+   =========================================================== */
 .btn {
-  padding:12px 16px;
-  border-radius:14px;
-  font-weight:700;
-  cursor:pointer;
-  border:none;
+  padding: 14px;
+  border-radius: 14px;
+  border: none;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 700;
+  transition: 0.2s;
+  text-align: center;
 }
-.btn.primary { background:var(--accent); color:white; }
-.btn.outline { border:1px solid #aac4ff; background:transparent; color:var(--accent); }
-.btn.small { padding:8px 12px; border-radius:10px; font-size:14px; }
 
-/* FAB button */
+.btn.primary {
+  background: var(--accent);
+  color: white;
+}
+.btn.primary:hover {
+  background: var(--accent-dark);
+}
+
+.btn.outline {
+  background: transparent;
+  border: 1px solid var(--input-border);
+  color: var(--accent);
+}
+
+.btn.small {
+  padding: 10px 12px;
+  font-size: 14px;
+  border-radius: 10px;
+}
+
+.fullwidth {
+  width: 100%;
+}
+
+/* Generate button loading */
+.btn.loading {
+  opacity: 0.8;
+  cursor: not-allowed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.spinner-btn {
+  width: 16px;
+  height: 16px;
+  border: 3px solid rgba(255,255,255,0.4);
+  border-top-color: #fff;
+  border-radius: 50%;
+  margin-left: 8px;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ===========================================================
+   iOS FAB BUTTON
+   =========================================================== */
 .fab {
-  position:fixed;
-  right:18px;
-  bottom:88px;
-  z-index:1100;
-  width:70px;
-  height:38px;
-  border-radius:18px;
-  font-size:14px;
-  font-weight:700;
-  color:white;
-  border:none;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background:linear-gradient(180deg,var(--accent),#1957a9);
-  box-shadow:0 12px 30px rgba(21,40,80,0.2);
+  position: fixed;
+  bottom: 88px;
+  right: 18px;
+  z-index: 1200;
+  background: linear-gradient(180deg, var(--accent), var(--accent-dark));
+  color: white;
+  border: none;
+  width: 72px;
+  height: 38px;
+  border-radius: 18px;
+  font-size: 14px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 12px 30px rgba(20,40,80,0.25);
 }
 
-/* Tab Bar */
-.tabbar {
-  position:fixed;
-  left:0; right:0; bottom:0;
-  height:64px;
-  background:#ffffffc7;
-  backdrop-filter:blur(8px);
-  display:flex;
-  gap:6px;
-  padding:8px 12px;
-  border-top:1px solid rgba(0,0,0,0.05);
-  z-index:1000;
+/* Dark mode FAB */
+.dark .fab {
+  box-shadow: 0 12px 30px rgba(0,0,0,0.45);
 }
+
+/* ===========================================================
+   iOS TAB BAR
+   =========================================================== */
+.tabbar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 66px;
+  background: var(--tab-bg);
+  backdrop-filter: blur(10px);
+  display: flex;
+  padding: 6px 10px;
+  gap: 8px;
+  border-top: 1px solid var(--card-border);
+  z-index: 1100;
+}
+
 .tab {
-  flex:1;
-  border:none;
-  background:transparent;
-  font-weight:600;
-  color:#4b5b73;
-  border-radius:12px;
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--text-muted);
+  border-radius: 12px;
 }
 .tab.active {
-  color:var(--accent);
-  background:rgba(42,106,204,0.12);
+  background: rgba(80, 135, 255, 0.18);
+  color: var(--accent);
 }
 
-/* Loading elements */
-.loading { text-align:center; margin:14px 0; }
-.loader-text {
-  display:flex;
-  gap:8px;
-  justify-content:center;
-  margin-bottom:10px;
+/* ===========================================================
+   LOADING ANIMATIONS
+   =========================================================== */
+.loading {
+  text-align: center;
+  margin: 20px 0;
 }
+
+.loader-text {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
 .loader-text div,
 .loader-text::before,
 .loader-text::after {
-  width:12px; height:12px;
-  background:var(--accent);
-  border-radius:50%;
-  animation:jump .6s infinite ease-in-out;
+  width: 12px;
+  height: 12px;
+  background: var(--accent);
+  border-radius: 50%;
+  animation: bounce 0.6s infinite ease-in-out;
 }
-@keyframes jump { 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-8px); } }
 
+.loader-text div {
+  animation-delay: 0.2s;
+}
+.loader-text::after {
+  animation-delay: 0.4s;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); opacity: 0.4; }
+  50% { transform: translateY(-8px); opacity: 1; }
+}
+
+/* Image loader */
 .loader-img {
-  width:48px; height:48px;
-  margin:auto;
-  border-radius:50%;
-  border:5px solid rgba(42,106,204,0.2);
-  border-top-color:var(--accent);
-  animation:spin .9s linear infinite;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 5px solid rgba(80,140,255,0.25);
+  border-top-color: var(--accent);
+  animation: spin 1s linear infinite;
 }
-@keyframes spin { to { transform:rotate(360deg); } }
 
-/* Progress Bars */
+.loading-label {
+  margin-top: 8px;
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+/* ===========================================================
+   PROGRESS BARS
+   =========================================================== */
 .progress-container {
-  background:#dfeaff;
-  border-radius:10px;
-  height:10px;
-  overflow:hidden;
-  margin-top:10px;
+  width: 100%;
+  background: var(--progress-bg);
+  height: 10px;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-top: 10px;
 }
+
 .progress-bar {
-  height:100%;
-  width:0%;
-  background:linear-gradient(90deg,#8ec0ff,var(--accent));
-  transition:width .3s ease;
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #8cb7ff, var(--accent));
+  transition: width 0.3s ease;
 }
 
-/* Image grid */
+/* ===========================================================
+   IMAGE GRID
+   =========================================================== */
 .image-grid {
-  display:grid;
-  gap:16px;
-  grid-template-columns:repeat(2,1fr);
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(2, 1fr);
+  margin-top: 10px;
 }
+
 .image-grid img {
-  width:100%;
-  border-radius:16px;
-  cursor:pointer;
-  box-shadow:0 10px 26px rgba(18,30,60,0.1);
+  width: 100%;
+  border-radius: 16px;
+  cursor: pointer;
+  box-shadow: 0 10px 26px rgba(18, 30, 60, 0.12);
+  transition: 0.2s;
 }
 
-/* One column on smaller devices */
-@media (max-width:768px){
-  .image-grid { grid-template-columns:1fr; }
+.image-grid img:hover {
+  transform: scale(1.02);
 }
 
-/* Modal (iOS sheet) */
+@media (max-width: 768px) {
+  .image-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ===========================================================
+   HISTORY LIST
+   =========================================================== */
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 10px;
+}
+
+.history-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px;
+  border-radius: 14px;
+  background: var(--input-bg);
+  border: 1px solid var(--input-border);
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.history-item img {
+  width: 70px;
+  height: 70px;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+.history-item:hover {
+  background: rgba(140,150,255,0.12);
+}
+
+.dark .history-item:hover {
+  background: rgba(120,140,255,0.16);
+}
+
+/* ===========================================================
+   SWITCH (Dark mode toggle)
+   =========================================================== */
+.switch-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
+  margin-top: 12px;
+  color: var(--text);
+}
+
+.switch-row input[type="checkbox"] {
+  appearance: none;
+  width: 46px;
+  height: 26px;
+  background: var(--input-border);
+  border-radius: 20px;
+  position: relative;
+  cursor: pointer;
+  transition: 0.25s;
+}
+
+.switch-row input[type="checkbox"]::after {
+  content: "";
+  width: 22px;
+  height: 22px;
+  background: white;
+  border-radius: 50%;
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  transition: 0.25s;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+.switch-row input[type="checkbox"]:checked {
+  background: var(--accent);
+}
+.switch-row input[type="checkbox"]:checked::after {
+  transform: translateX(20px);
+}
+
+/* Dark mode switch thumb */
+.dark .switch-row input[type="checkbox"]::after {
+  background: #ddd;
+}
+
+/* ===========================================================
+   TEXT RESULT FORMATTING
+   =========================================================== */
+.text-result p {
+  margin-bottom: 10px;
+  line-height: 1.55;
+  font-size: 15px;
+  color: var(--text);
+}
+
+/* ===========================================================
+   MODAL SHEET (iOS bottom sheet)
+   =========================================================== */
 .modal {
-  position:fixed;
-  inset:0;
-  display:none;
-  align-items:flex-end;
-  justify-content:center;
-  z-index:1400;
+  position: fixed;
+  inset: 0;
+  display: none;
+  justify-content: center;
+  align-items: flex-end;
+  z-index: 1400;
+  backdrop-filter: blur(3px);
 }
-.modal.show { display:flex; }
+
+.modal.show {
+  display: flex;
+}
+
 .sheet {
-  width:100%;
-  max-width:900px;
-  background:#ffffffee;
-  backdrop-filter:blur(12px);
-  border-radius:20px 20px 0 0;
-  padding:18px;
+  width: 100%;
+  max-width: 900px;
+  background: var(--modal-bg);
+  border-radius: 20px 20px 0 0;
+  padding: 14px 20px 24px;
+  box-shadow: 0 -6px 30px rgba(0,0,0,0.25);
 }
+
 .sheet-handle {
-  width:60px; height:6px;
-  margin:auto;
-  background:#dee7ff;
-  border-radius:3px;
+  width: 55px;
+  height: 6px;
+  border-radius: 4px;
+  background: var(--input-border);
+  margin: 0 auto 12px;
 }
+
+.sheet-body img {
+  width: 100%;
+  border-radius: 16px;
+}
+
+/* Sheet actions */
 .sheet-actions {
-  display:flex;
-  gap:12px;
-  margin-top:14px;
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
 }
+
+/* ===========================================================
+   MORE DARK MODE ADJUSTMENTS
+   =========================================================== */
+.dark .card {
+  background: var(--card);
+  border-color: var(--card-border);
+}
+
+.dark input,
+.dark select {
+  background: var(--input-bg);
+  border-color: var(--input-border);
+  color: var(--text);
+}
+
+.dark .loading-label {
+  color: var(--text-muted);
+}
+
+.dark .image-grid img {
+  box-shadow: 0 10px 26px rgba(0,0,0,0.35);
+}
+
+/* Tabbar dark */
+.dark .tabbar {
+  background: var(--tab-bg);
+  border-top-color: rgba(255,255,255,0.08);
+}
+
+.dark .tab.active {
+  background: rgba(120, 140, 255, 0.25);
+  color: var(--accent);
+}
+
+/* FAB dark shadow */
+.dark .fab {
+  box-shadow: 0 12px 32px rgba(0,0,0,0.45);
+}
+
+/* Modal dark */
+.dark .sheet {
+  box-shadow: 0 -6px 30px rgba(0,0,0,0.65);
+}
+
+/* ===========================================================
+   MOBILE OPTIMIZATION
+   =========================================================== */
+@media (max-width: 600px) {
+  .ios-header h1 {
+    font-size: 24px;
+  }
+
+  .hero-card h2 {
+    font-size: 20px;
+  }
+
+  .card {
+    padding: 18px;
+  }
+
+  .btn {
+    font-size: 14px;
+    padding: 12px;
+  }
+
+  .fab {
+    width: 70px;
+    height: 36px;
+    font-size: 13px;
+    bottom: 82px;
+  }
+
+  .tab {
+    font-size: 13px;
+  }
+}
+
+/* ===========================================================
+   SUPER CLEAN ULTRA-MINIMAL SCROLLBAR (iOS Style)
+   =========================================================== */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(120,140,200,0.25);
+  border-radius: 10px;
+}
+.dark ::-webkit-scrollbar-thumb {
+  background: rgba(150,160,200,0.2);
+}
+
+/* ===========================================================
+   END OF FILE
+   =========================================================== */
