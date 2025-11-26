@@ -6,29 +6,39 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { prompt } = req.body || {};
-    if (!prompt) {
-      return res.status(400).json({ error: "Missing prompt" });
+    const { prompts } = req.body || {};
+    if (!Array.isArray(prompts) || prompts.length === 0) {
+      return res.status(400).json({ error: "Missing prompts array" });
     }
 
-    // Pollinations free API
-    const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}`;
+    const images = [];
 
-    const response = await fetch(url);
+    for (const p of prompts) {
+      // Pollinations format must be simple
+      const cleanedPrompt = p
+        .replace(/[^\w\s]/gi, "")     // remove symbols
+        .replace(/\s+/g, " ")         // compress spaces
+        .trim();
 
-    if (!response.ok) {
-      return res.status(500).json({ error: "Failed to fetch from Pollinations" });
+      const url =
+        `https://image.pollinations.ai/prompt/` +
+        encodeURIComponent(cleanedPrompt) +
+        `?width=1024&height=1024&nologo=true`;
+
+      const response = await fetch(url);
+
+      if (!response.ok) {
+        images.push(null);
+        continue;
+      }
+
+      const buffer = Buffer.from(await response.arrayBuffer());
+      const base64 = buffer.toString("base64");
+
+      images.push(`data:image/jpeg;base64,${base64}`);
     }
 
-    // Convert to buffer → base64
-    const arrayBuffer = await response.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
-    const base64 = buffer.toString("base64");
-
-    return res.status(200).json({
-      images: [`data:image/jpeg;base64,${base64}`],
-      provider: "Pollinations.ai"
-    });
+    return res.status(200).json({ images });
   } catch (err) {
     console.error("POLLINATIONS ERROR:", err);
     return res.status(500).json({ error: String(err) });
