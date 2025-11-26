@@ -102,11 +102,12 @@ document.getElementById("clearHistory").addEventListener("click",()=>{
 document.getElementById("designForm").addEventListener("submit", async (e)=>{
   e.preventDefault();
 
-  const color = colorInput.value;
-  const size = sizeInput.value;
-  const roomType = roomTypeInput.value;
-  const budget = budgetInput.value;
-  const style = styleInput.value;
+  const color = document.getElementById("color").value;
+  const size = document.getElementById("size").value;
+  const roomType = document.getElementById("roomType").value;
+  const budget = document.getElementById("budget").value;
+  const style = document.getElementById("style").value;
+
 
   const btn = document.getElementById("generateBtn");
   btn.disabled = true;
