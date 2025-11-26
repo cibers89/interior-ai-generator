@@ -9,13 +9,12 @@ export default async function handler(req, res) {
     if (!prompt) return res.status(400).json({ error: "Missing prompt" });
 
     const HF_KEY = process.env.HF_API_KEY;
-    const MODEL = process.env.HF_MODEL || "stabilityai/stable-diffusion-xl-base-1.0";
+    const MODEL =
+      process.env.HF_MODEL ||
+      "stabilityai/stable-diffusion-xl-base-1.0";  // safe model
 
-    if (!HF_KEY) {
-      return res
-        .status(500)
-        .json({ error: "Missing HF_API_KEY in environment" });
-    }
+    if (!HF_KEY)
+      return res.status(500).json({ error: "Missing HF_API_KEY" });
 
     const API_URL = `https://router.huggingface.co/${MODEL}`;
 
@@ -35,22 +34,26 @@ export default async function handler(req, res) {
         }),
       });
 
-      const contentType = response.headers.get("content-type") || "";
+      const type = response.headers.get("content-type");
 
-      // 🔥 FIX: HF kadang balas JSON error saat model cold-start
-      if (contentType.includes("application/json")) {
+      // If HF returns JSON → error or waiting model
+      if (type.includes("application/json")) {
         const err = await response.json();
-        return res.status(500).json({ error: err.error || JSON.stringify(err) });
+        return res.status(500).json({
+          error: err.error || JSON.stringify(err),
+        });
       }
 
-      // 🔥 FIX: correctly convert buffer → base64
+      // Convert buffer > base64
       const buffer = Buffer.from(await response.arrayBuffer());
-      images.push(`data:image/png;base64,${buffer.toString("base64")}`);
+      const base64 = buffer.toString("base64");
+
+      images.push(`data:image/png;base64,${base64}`);
     }
 
-    res.status(200).json({ images });
+    return res.status(200).json({ images });
   } catch (err) {
     console.error("IMAGE ERROR:", err);
-    res.status(500).json({ error: String(err) });
+    return res.status(500).json({ error: String(err) });
   }
 }
