@@ -1,0 +1,8 @@
+{
+  "name": "interior-ai-generator",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": { "start": "vercel dev", "lint": "echo \"no lint configured\"" },
+  "dependencies": { "node-fetch": "^3.4.1" },
+  "engines": { "node": ">=18" }
+}
