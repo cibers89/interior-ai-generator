@@ -32,7 +32,7 @@
       <input type="text" id="roomType" placeholder="ruang tamu, kamar tidur, dapur" required />
 
       <label>Budget (dalam juta rupiah)</label>
-      <input type="range" id="budget" min="5" max="500" value="50" 
+      <input type="range" id="budget" min="5" max="500" value="50"
              oninput="budgetLabel.innerText=this.value + ' juta'" />
       <div><strong id="budgetLabel">50 juta</strong></div>
 
@@ -48,18 +48,24 @@
       <button type="submit" id="generateBtn" class="btn">Generate Design</button>
     </form>
 
-    <!-- LOADING (TEXT) -->
+    <!-- LOADING TEXT -->
     <div id="loadingText" class="loading" style="display:none;">
-      <div class="loader-text">
-        <div></div>
-      </div>
+      <div class="loader-text"><div></div></div>
       <p>AI sedang menulis deskripsi ruangan...</p>
+
+      <div class="progress-container">
+        <div id="progressTextBar" class="progress-bar"></div>
+      </div>
     </div>
 
-    <!-- LOADING (IMAGES) -->
+    <!-- LOADING IMAGES -->
     <div id="loadingImages" class="loading" style="display:none;">
       <div class="loader-img"></div>
       <p>AI sedang membuat gambar interior...</p>
+
+      <div class="progress-container">
+        <div id="progressImageBar" class="progress-bar"></div>
+      </div>
     </div>
 
     <!-- TEXT RESULT -->
