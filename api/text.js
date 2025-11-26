@@ -16,7 +16,7 @@ export default async function handler(req, res) {
     const apiUrl = 'https://api.groq.com/openai/v1/chat/completions';
 
     const payload = {
-      model: 'llama-3.2-90b-text-preview', // recommended stable model
+      model: 'llama-3.1-70b-versatile', // recommended stable model
       messages: [
         {
           role: 'system',
