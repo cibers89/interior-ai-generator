@@ -646,12 +646,11 @@ input[type="range"]::-webkit-slider-thumb {
   }
 }
 
-	.app-logo {
-  width: 38px;
-  height: 38px;
-  object-fit: contain;
-  margin-bottom: 6px;
-  opacity: 0.95;
+	.app-logo-circle {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  object-fit: cover;
 }
 
 /* ===========================================================
