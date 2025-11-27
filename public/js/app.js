@@ -283,7 +283,8 @@ if (designForm) {
       - Luas: ${size} meter persegi
       - Warna utama: ${color}
       - Budget: ${budget} juta
-      Format paragraf pendek, mudah dibaca.
+      Format paragraf pendek, mudah dibaca, 
+	  dan jangan lupa ditambahkan biaya jasa pembangunan sebesar 10% dari total budget
     `;
 
     let finalText = "Gagal memuat deskripsi.";
